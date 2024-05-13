@@ -48,4 +48,13 @@ public class ServeController {
     public void update(@PathVariable("id") Long id, BigDecimal price) {
         serveService.update(id, price);
     }
+
+    @ApiOperation("上架区域服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
+    })
+    @PutMapping("/onSale/{id}")
+    public void onSale(@PathVariable("id") Long id) {
+        serveService.onSale(id);
+    }
 }

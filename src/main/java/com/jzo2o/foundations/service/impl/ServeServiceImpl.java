@@ -2,6 +2,7 @@ package com.jzo2o.foundations.service.impl;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.jzo2o.common.expcetions.CommonException;
 import com.jzo2o.common.expcetions.ForbiddenOperationException;
 import com.jzo2o.common.model.PageResult;
@@ -101,4 +102,39 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         // 返回修改后数据
         return baseMapper.selectById(id);
     }
+
+    /**
+     * 上架区域服务
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Serve onSale(Long id) {
+        Serve serve = baseMapper.selectById(id);
+        if (ObjectUtils.isNull(serve)) {
+            throw new ForbiddenOperationException("区域服务信息不存在");
+        }
+
+        if (!(serve.getSaleStatus() == FoundationStatusEnum.INIT.getStatus()
+                || serve.getSaleStatus() == FoundationStatusEnum.ENABLE.getStatus())) {
+            throw new ForbiddenOperationException("区域服务必须在草稿/下架状态时才可上架");
+        }
+
+        ServeItem serveItem = serveItemMapper.selectById(serve.getServeItemId());
+        if (serveItem.getActiveStatus() != FoundationStatusEnum.ENABLE.getStatus()) {
+            throw new ForbiddenOperationException("服务项必须启用才可上架该区域服务");
+        }
+
+        boolean update = lambdaUpdate().eq(Serve::getId, id)
+                .set(Serve::getSaleStatus, FoundationStatusEnum.ENABLE.getStatus())
+                .update();
+        if (!update) {
+            throw new CommonException("区域服务上架失败");
+        }
+
+        return baseMapper.selectById(id);
+    }
+
+
 }
