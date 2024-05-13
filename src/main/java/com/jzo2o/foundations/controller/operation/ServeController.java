@@ -2,16 +2,17 @@ package com.jzo2o.foundations.controller.operation;
 
 import com.jzo2o.common.model.PageResult;
 import com.jzo2o.foundations.model.dto.request.ServePageQueryReqDTO;
+import com.jzo2o.foundations.model.dto.request.ServeUpsertReqDTO;
 import com.jzo2o.foundations.model.dto.response.ServeResDTO;
 import com.jzo2o.foundations.service.IServeService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,5 +31,21 @@ public class ServeController {
     @GetMapping("/page")
     public PageResult<ServeResDTO> page(ServePageQueryReqDTO dto) {
         return serveService.page(dto);
+    }
+
+    @ApiOperation("批量添加区域服务")
+    @PostMapping("/batch")
+    public void add(@RequestBody List<ServeUpsertReqDTO> serveUpsertReqDTOList) {
+        serveService.add(serveUpsertReqDTOList);
+    }
+
+    @ApiOperation("修改区域服务价格")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class),
+            @ApiImplicitParam(name = "price", value = "价格", required = true, dataTypeClass = BigDecimal.class)
+    })
+    @PutMapping("/{id}")
+    public void update(@PathVariable("id") Long id, BigDecimal price) {
+        serveService.update(id, price);
     }
 }
