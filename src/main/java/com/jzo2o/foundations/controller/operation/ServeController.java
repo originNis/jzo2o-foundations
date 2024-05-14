@@ -1,6 +1,7 @@
 package com.jzo2o.foundations.controller.operation;
 
 import com.jzo2o.common.model.PageResult;
+import com.jzo2o.foundations.model.domain.Serve;
 import com.jzo2o.foundations.model.dto.request.ServePageQueryReqDTO;
 import com.jzo2o.foundations.model.dto.request.ServeUpsertReqDTO;
 import com.jzo2o.foundations.model.dto.response.ServeResDTO;
@@ -45,8 +46,8 @@ public class ServeController {
             @ApiImplicitParam(name = "price", value = "价格", required = true, dataTypeClass = BigDecimal.class)
     })
     @PutMapping("/{id}")
-    public void update(@PathVariable("id") Long id, BigDecimal price) {
-        serveService.update(id, price);
+    public Serve update(@PathVariable("id") Long id, BigDecimal price) {
+        return serveService.update(id, price);
     }
 
     @ApiOperation("上架区域服务")
@@ -54,7 +55,43 @@ public class ServeController {
             @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
     })
     @PutMapping("/onSale/{id}")
-    public void onSale(@PathVariable("id") Long id) {
-        serveService.onSale(id);
+    public Serve onSale(@PathVariable("id") Long id) {
+        return serveService.onSale(id);
+    }
+
+    @ApiOperation("删除区域服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
+    })
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable("id") Long id) {
+        serveService.deleteServe(id);
+    }
+
+    @ApiOperation("下架区域服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
+    })
+    @PutMapping("/offSale/{id}")
+    public void offSale(@PathVariable("id") Long id) {
+        serveService.offSale(id);
+    }
+
+    @ApiOperation("设置热门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
+    })
+    @PutMapping("/onHot/{id}")
+    public void onHot(@PathVariable("id") Long id) {
+        serveService.setHot(id, 1);
+    }
+
+    @ApiOperation("取消热门")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "区域服务id", required = true, dataTypeClass = Long.class)
+    })
+    @PutMapping("/offHot/{id}")
+    public void offHot(@PathVariable("id") Long id) {
+        serveService.setHot(id, 0);
     }
 }

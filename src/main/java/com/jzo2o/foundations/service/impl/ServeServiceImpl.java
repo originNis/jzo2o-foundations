@@ -1,8 +1,6 @@
 package com.jzo2o.foundations.service.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.jzo2o.common.expcetions.CommonException;
 import com.jzo2o.common.expcetions.ForbiddenOperationException;
 import com.jzo2o.common.model.PageResult;
@@ -136,5 +134,41 @@ public class ServeServiceImpl extends ServiceImpl<ServeMapper, Serve> implements
         return baseMapper.selectById(id);
     }
 
+    /**
+     * 删除区域服务
+     *
+     * @param id
+     */
+    @Override
+    public void deleteServe(Long id) {
+        int success = baseMapper.deleteById(id);
+        if (success <= 0) {
+            throw new CommonException("删除失败");
+        }
+    }
 
+    /**
+     * 下架区域服务
+     * @param id
+     * @return
+     */
+    @Override
+    public Serve offSale(Long id) {
+        lambdaUpdate().eq(Serve::getId, id)
+                .set(Serve::getSaleStatus, FoundationStatusEnum.DISABLE.getStatus()).update();
+        return baseMapper.selectById(id);
+    }
+
+    /**
+     * 设置热门
+     * 0为非热门，1为热门
+     * @param id
+     * @return
+     */
+    @Override
+    public Serve setHot(Long id, Integer isHot) {
+        lambdaUpdate().eq(Serve::getId, id)
+                .set(Serve::getIsHot, isHot).update();
+        return baseMapper.selectById(id);
+    }
 }
